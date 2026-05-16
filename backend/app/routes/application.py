@@ -5,7 +5,10 @@ from app.database.database import SessionLocal
 from app.models.application import Application
 from app.models.user import User
 
-from app.schemas.application import ApplicationCreate
+from app.schemas.application import (
+    ApplicationCreate,
+    ApplicationUpdate
+)
 
 from app.auth.dependencies import get_current_user
 
@@ -52,4 +55,82 @@ def create_application(
 
     return {
         "message": "Application created successfully"
+    }
+
+@router.get("/")
+def get_applications(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    applications = db.query(Application).filter(
+        Application.user_id == current_user.id
+    ).all()
+
+    return applications
+
+@router.put("/{application_id}")
+def update_application(
+
+    application_id: int,
+    updated_data: ApplicationUpdate,
+
+    db: Session = Depends(get_db),
+
+    current_user: User = Depends(get_current_user)
+):
+
+    application = db.query(Application).filter(
+        Application.id == application_id,
+        Application.user_id == current_user.id
+    ).first()
+
+    if not application:
+        return {
+            "message": "Application not found"
+        }
+
+    application.company = updated_data.company
+    application.role = updated_data.role
+    application.status = updated_data.status
+
+    application.job_link = updated_data.job_link
+    application.location = updated_data.location
+    application.notes = updated_data.notes
+
+    db.commit()
+
+    db.refresh(application)
+
+    return {
+        "message": "Application updated successfully"
+    }
+
+
+@router.delete("/{application_id}")
+def delete_application(
+
+    application_id: int,
+
+    db: Session = Depends(get_db),
+
+    current_user: User = Depends(get_current_user)
+):
+
+    application = db.query(Application).filter(
+        Application.id == application_id,
+        Application.user_id == current_user.id
+    ).first()
+
+    if not application:
+        return {
+            "message": "Application not found"
+        }
+
+    db.delete(application)
+
+    db.commit()
+
+    return {
+        "message": "Application deleted successfully"
     }

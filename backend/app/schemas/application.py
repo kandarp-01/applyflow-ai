@@ -9,3 +9,14 @@ class ApplicationCreate(BaseModel):
     job_link: str
     location: str
     notes: str
+
+
+class ApplicationUpdate(BaseModel):
+
+    company: str
+    role: str
+    status: str
+
+    job_link: str
+    location: str
+    notes: str
