@@ -8,7 +8,20 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+
+  font-family: Inter, sans-serif;
+
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+
+body {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.dark body {
   background: #020617;
   color: white;
-  font-family: Inter, sans-serif;
 }
